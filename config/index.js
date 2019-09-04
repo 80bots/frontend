@@ -8,7 +8,7 @@ export const ROUTES = {
     { name: 'Bots Schedule', href: '/admin/schedule' },
     { name: 'Bots Sessions', href: '/admin/sessions' },
     { name: 'Subscription Plans', href: '/admin/subscriptions' },
-    { name: 'Low Credit Notifications', href: '/admin/notifications' },
+    { name: 'Email Notifications', href: '/admin/notifications' },
   ],
   User: [
     { name: 'Running Bots', href: '/bots/running' },

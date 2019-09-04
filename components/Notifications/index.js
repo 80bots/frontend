@@ -4,7 +4,8 @@ import styled from '@emotion/styled';
 import Button from '../default/Button';
 import Modal from '../default/Modal';
 import Icon from '../default/icons';
-import Select from 'react-select';
+// import Select from 'react-select';
+import { Input, Select, Textarea } from 'components/default/inputs';
 import Paginator from '../default/Paginator';
 import { withTheme } from 'emotion-theming';
 import { css } from '@emotion/core';
@@ -51,6 +52,20 @@ const modalStyles = css`
   overflow-y: visible;
 `;
 
+const inputStyles = {
+  container: css`
+    margin-bottom: 30px;
+    &:first-of-type {
+      margin-top: 20px;
+    }
+  `
+};
+
+const selectStyles = {
+  ...inputStyles,
+  select: { menuPortal: base => ({ ...base, zIndex: 5 }) }
+};
+
 const PERCENTAGES = (() => {
   let percentages = [];
   for (let i = 1; i <= 100; i++) {
@@ -59,11 +74,20 @@ const PERCENTAGES = (() => {
   return percentages;
 })();
 
+const VALIDATION = {
+  PERCENTAGE: 'percentage',
+  MESSAGE: 'message',
+  SUBJECT: 'subject'
+};
+
 const Notifications = ({ theme, addNotification, lowCreditNotifications, total, ...props }) => {
   const [clickedNotification, setClickedNotification] = useState(null);
   const [percentage, setPercentage] = useState(null);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(1);
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
+  const [errors, setErrors] = useState([]);
 
   const editModal = useRef(null);
   const deleteModal = useRef(null);
@@ -182,7 +206,22 @@ const Notifications = ({ theme, addNotification, lowCreditNotifications, total, 
       <Modal ref={addModal} title={'Add Notification'} contentStyles={modalStyles}
         onClose={onModalClose}
       >
-        <Select options={PERCENTAGES} value={percentage} onChange={option => setPercentage(option)} />
+        <Select label={'Percentage'} styles={selectStyles} value={percentage}
+          onChange={option => setPercentage(option)} options={PERCENTAGES}
+          menuPortalTarget={document.body}
+          menuPosition={'absolute'} menuPlacement={'bottom'}
+          error={errors.indexOf(VALIDATION.PERCENTAGE) > -1 ? 'This field is required' : ''}
+        />
+
+        <Input label={'Subject'} styles={inputStyles} value={subject}
+          onChange={e => setSubject(e.target.value)}
+          error={errors.indexOf(VALIDATION.SUBJECT) > -1 ? 'This field is required' : ''}
+        />
+
+        <Textarea label={'Message'} rows={10} cols={50} styles={inputStyles} value={message}
+          onChange={e => setMessage(e.target.value)}
+          error={errors.indexOf(VALIDATION.MESSAGE) > -1 ? 'This field is required' : ''}
+        />
         <Buttons>
           <Button type={'primary'} onClick={addLowCreditNotification}>Add</Button>
           <Button type={'danger'} onClick={() => addModal.current.close()}>Cancel</Button>
